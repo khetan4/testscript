@@ -1,0 +1,61 @@
+name: DSLAB Image Build Script
+
+# on:
+#   schedule:
+#     - cron: '0 0 * * *' # Set your preferred schedule here for how often to check for changes
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Pull the latest existing_image
+      run: docker pull existing_image:latest
+      
+    - name: Get Git commit SHA
+      id: git-sha
+      run: |
+        git fetch --tags
+        git_rev=$(git rev-parse --short HEAD)
+        echo "::set-output name=git_sha::${git_rev}"
+
+    - name: Get current date
+      id: get-date
+      run: echo "::set-output name=current_date::$(date +'%Y-%m-%d')"
+
+    - name: Increment version number
+      id: increment-version
+      run: |
+        version=$(cat version.txt)
+        new_version=$((version + 1))
+        echo "Version: $new_version" > version.txt
+        echo "Git SHA: ${{ steps.git-sha.outputs.git_sha }}" >> version.txt
+        echo "Date: ${{ steps.get-date.outputs.current_date }}" >> version.txt
+        echo "::set-output name=version::${new_version}"
+      
+    - name: Build Docker image
+      run: |
+        version=${{ steps.increment-version.outputs.version }}
+        docker build -t new_image_name:v$version .
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      run: aws ecr get-login-password --region AWS_REGION | docker login --username AWS --password-stdin AWS_ACCOUNT_ID.dkr.ecr.AWS_REGION.amazonaws.com
+
+    - name: Tag the Docker image
+      run: |
+        version=${{ steps.increment-version.outputs.version }}
+        docker tag new_image_name:v$version AWS_ACCOUNT_ID.dkr.ecr.AWS_REGION.amazonaws.com/new_image_name:v$version
+
+    - name: Push to Amazon ECR
+      run: |
+        version=${{ steps.increment-version.outputs.version }}
+        docker push AWS_ACCOUNT_ID.dkr.ecr.AWS_REGION.amazonaws.com/new_image_name:v$version
