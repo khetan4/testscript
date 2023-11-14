@@ -37,6 +37,8 @@ jobs:
         version=$(cat version.txt)
         new_version=$((version + 1))
         echo "Version: $new_version" > version.txt
+    - name: View version.txt
+      run: cat version.txt
       
     - name: Build Docker image
       run: |
