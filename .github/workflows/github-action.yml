@@ -37,6 +37,9 @@ jobs:
         version=$(cat version.txt)
         new_version=$((version + 1))
         echo "Version: $new_version" > version.txt
+        echo "::set-output name=version::${new_version}"
+        version=${{ steps.increment-version.outputs.version }}
+
     - name: View version.txt
       run: cat version.txt
       
