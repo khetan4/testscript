@@ -37,22 +37,12 @@ jobs:
     - name: Increment version number
       id: increment-version
       run: |
-        #version=$(cat version.txt)
         version=$(grep "Version:" version.txt | awk '{print $2}')
         new_version=$((version + 1))
-        #echo "$new_version" > version.txt
         echo "::set-output name=version::${new_version}"
         echo "Version: $new_version" > version.txt
         echo "GIT_COMMIT: $GITHUB_SHA" >> version.txt
         echo "Date: $(date +'%Y-%m-%d')" >> version.txt
-        
-        # version=$(cat version.txt)
-        # new_version=$((version + 1))
-        # echo $new_version > version.txt
-        # echo "::set-output name=version::${new_version}"
-        # echo "GIT_COMMIT: ${git_rev}" >> version.txt
-        # echo "Date: $(date +'%Y-%m-%d') >> version.txt
-        # echo "Version: $new_version" >> version.txt
       
     - name: Commit updated version.txt
       env:
