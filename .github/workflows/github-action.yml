@@ -39,10 +39,10 @@ jobs:
       run: |
         version=$(cat version.txt)
         new_version=$((version + 1))
-        echo "Version: $new_version" > version.txt
+        echo "$new_version" > version.txt
+        echo "Version: $new_version" >> version.txt
         echo "GIT_COMMIT: $GITHUB_SHA" >> version.txt
         echo "Date: $(date +'%Y-%m-%d')" >> version.txt
-        echo "$new_version" > version.txt
         
         # version=$(cat version.txt)
         # new_version=$((version + 1))
