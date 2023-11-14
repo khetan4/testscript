@@ -37,9 +37,6 @@ jobs:
         version=$(cat version.txt)
         new_version=$((version + 1))
         echo "Version: $new_version" > version.txt
-        echo "Git SHA: ${{ steps.git-sha.outputs.git_sha }}" >> version.txt
-        echo "Date: ${{ steps.get-date.outputs.current_date }}" >> version.txt
-        echo "::set-output name=version::${new_version}"
       
     - name: Build Docker image
       run: |
