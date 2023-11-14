@@ -41,7 +41,7 @@ jobs:
         new_version=$((version + 1))
         echo $new_version > version.txt
         echo "::set-output name=version::${new_version}"
-        echo "Git Commit: ${git_rev}" >> version.txt
+        echo "GIT_COMMIT: ${git_rev}" >> version.txt
         echo "Date: $(date +'%Y-%m-%d') >> version.txt
       
     - name: Commit updated version.txt
