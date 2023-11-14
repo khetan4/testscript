@@ -1,4 +1,4 @@
-2
-GIT_COMMIT:
-Date:
-Version:
+
+GIT_COMMIT: 
+Date: 2023-11-14
+Version: 
