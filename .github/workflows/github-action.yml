@@ -18,7 +18,7 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Pull the latest existing_image
-      run: docker pull existing_image:latest
+      run: docker pull nginx:latest
       
     - name: Get Git commit SHA
       id: git-sha
