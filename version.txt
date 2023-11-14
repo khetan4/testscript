@@ -1,4 +1,3 @@
-
-Version: 
+Version: 3
 GIT_COMMIT: e93550a75a7fd6885e2aca89bdac21701f8f542b
 Date: 2023-11-14
