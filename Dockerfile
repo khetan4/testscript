@@ -1,6 +1,5 @@
 # Use the base image you want to build upon
 FROM nginx:latest
-
 # 580240783317.dkr.ecr.us-west-2.amazonaws.com/dsnotebook-tensorflow:latest
 
 # Install necessary libraries or packages
