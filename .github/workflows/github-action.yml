@@ -47,7 +47,7 @@ jobs:
         git config --global user.email "khetanpawar93@gmail.com"
         git config --global user.name "khetan4"
         git add version.txt
-        git commit -m "Increment version.txt"
+        git commit -m " Increment version.txt"
         git push
         
     - name: Build Docker image
