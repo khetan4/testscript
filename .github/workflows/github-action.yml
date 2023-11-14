@@ -1,9 +1,5 @@
 name: DSLAB Image Build Script
 
-# on:
-#   schedule:
-#     - cron: '0 0 * * *' # Set your preferred schedule here for how often to check for changes
-
 on:
   push:
     branches:
@@ -31,33 +27,41 @@ jobs:
       id: get-date
       run: echo "::set-output name=current_date::$(date +'%Y-%m-%d')"
 
+    - name: Retrieve version number
+      id: get-version
+      run: |
+        cat version.txt
+
     - name: Increment version number
       id: increment-version
       run: |
         version=$(cat version.txt)
         new_version=$((version + 1))
-        echo "Version: $new_version" > version.txt
+        echo $new_version > version.txt
         echo "::set-output name=version::${new_version}"
-        version=${{ steps.increment-version.outputs.version }}
-
-    - name: View version.txt
-      run: cat version.txt
       
+    - name: Commit updated version.txt
+      run: |
+        git config --global user.email "actions@github.com"
+        git config --global user.name "Khetan Pawar"
+        git add version.txt
+        git commit -m "Increment version.txt"
+        git push
+        
     - name: Build Docker image
       run: |
-        version=${{ steps.increment-version.outputs.version }}
+        version=$(cat version.txt)
         docker build -t new_image_name:v$version .
 
     - name: Login to Amazon ECR
-      id: login-ecr
       run: aws ecr get-login-password --region AWS_REGION | docker login --username AWS --password-stdin AWS_ACCOUNT_ID.dkr.ecr.AWS_REGION.amazonaws.com
 
     - name: Tag the Docker image
       run: |
-        version=${{ steps.increment-version.outputs.version }}
+        version=$(cat version.txt)
         docker tag new_image_name:v$version AWS_ACCOUNT_ID.dkr.ecr.AWS_REGION.amazonaws.com/new_image_name:v$version
 
     - name: Push to Amazon ECR
       run: |
-        version=${{ steps.increment-version.outputs.version }}
+        version=$(cat version.txt)
         docker push AWS_ACCOUNT_ID.dkr.ecr.AWS_REGION.amazonaws.com/new_image_name:v$version
