@@ -28,12 +28,7 @@ jobs:
     - name: Get current date
       id: get-date
       run: echo "::set-output name=current_date::$(date +'%Y-%m-%d')"
-
-    - name: Retrieve version number
-      id: get-version
-      run: |
-        cat version.txt
-
+  
     - name: Increment version number
       id: increment-version
       run: |
@@ -53,10 +48,16 @@ jobs:
         git add version.txt
         git commit -m " Increment version.txt"
         git push
+
+    - name: Retrieve version number
+      id: get-version
+      run: |
+        version=$(grep "Version:" version.txt | awk '{print $2}')
+        echo "::set-output name=version::${version}"
         
     - name: Build Docker image
       run: |
-        version=$(cat version.txt)
+        version=${{ steps.get-version.outputs.version }}
         docker build -t new_image_name:v$version .
 
     - name: Login to Amazon ECR
